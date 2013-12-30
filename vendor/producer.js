@@ -8,13 +8,13 @@
  */
 
 var stream = require('stream'),
-    util = require('util');
+    util = require('util'),
+    ip = require('ip'),
+    uuid = require('node-uuid'),
+    tick = typeof setImmediate == 'undefined'
+      ? process.nextTick
+      : setImmediate;
 
-var ip = require('ip'),
-    uuid = require('node-uuid');
-
-//
-// ### function Producer (options)
 // #### @options {Object} Options for this producer.
 // Constructor function for the Producer object responsible
 // for creating events to process.
@@ -110,7 +110,7 @@ Object.keys(Producer.prototype.types).forEach(function (key) {
         //
         if (value === 0) {
           return (function tickProduce() {
-            process.nextTick(function () {
+            tick(function () {
               self.produce();
               tickProduce();
             });
